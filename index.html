@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastro Vale Tubarão — 2Neuron</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root {
+    --purple: #7B2FBE;
+    --purple-bright: #9B4FDE;
+    --purple-light: #B06FEE;
+    --purple-glow: rgba(123,47,190,0.35);
+    --purple-subtle: rgba(155,79,222,0.1);
+    --bg-dark: #0A0A0F;
+    --bg-card: #111118;
+    --bg-input: #1A1A24;
+    --text-white: #F0ECF5;
+    --text-muted: #8A849A;
+    --border: #2A2A3A;
+    --error: #FF5C5C;
+    --success: #4AE68A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Exo 2', sans-serif;
+    background: var(--bg-dark);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -30%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(123,47,190,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -20%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(155,79,222,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border-radius: 24px;
+    padding: 40px 32px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 80px rgba(123,47,190,0.08);
+    border: 1px solid var(--border);
+    animation: slideUp 0.6s ease-out;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--purple), var(--purple-bright), var(--purple), transparent);
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo-area {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .logo-img {
+    height: 48px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 20px rgba(123,47,190,0.3));
+  }
+
+  h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-white);
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+  }
+
+  h1 .accent {
+    color: var(--purple-bright);
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 300;
+  }
+
+  .form-group {
+    margin-bottom: 22px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  label .required {
+    color: var(--purple-bright);
+    margin-left: 2px;
+  }
+
+  input {
+    width: 100%;
+    padding: 14px 16px;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 15px;
+    color: var(--text-white);
+    background: var(--bg-input);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+
+  input::placeholder {
+    color: #4A4460;
+    font-weight: 300;
+  }
+
+  input:focus {
+    border-color: var(--purple);
+    background: #15151F;
+    box-shadow: 0 0 0 4px var(--purple-subtle), 0 0 20px rgba(123,47,190,0.1);
+  }
+
+  input.error {
+    border-color: var(--error);
+    background: rgba(255,92,92,0.05);
+  }
+
+  input.error:focus {
+    box-shadow: 0 0 0 4px rgba(255,92,92,0.1);
+  }
+
+  .error-msg {
+    font-size: 12px;
+    color: var(--error);
+    margin-top: 6px;
+    display: none;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+  }
+
+  .error-msg.visible {
+    display: flex;
+  }
+
+  .hint {
+    font-size: 12px;
+    color: #4A4460;
+    margin-top: 6px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, var(--purple), var(--purple-bright));
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--purple-glow);
+  }
+
+  .btn:hover::before { opacity: 1; }
+
+  .btn:active { transform: translateY(0); }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn .spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto;
+  }
+
+  .btn.loading .btn-text { display: none; }
+  .btn.loading .spinner { display: block; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .success-state {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .success-state.visible { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .success-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(74,230,138,0.08);
+    border: 2px solid rgba(74,230,138,0.2);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .success-icon svg {
+    width: 36px;
+    height: 36px;
+    stroke: var(--success);
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .success-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--success);
+    margin-bottom: 8px;
+  }
+
+  .success-msg {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .qr-section {
+    margin-top: 28px;
+    text-align: center;
+  }
+
+  .qr-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .qr-divider::before,
+  .qr-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .qr-divider span {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  #qrcode {
+    display: inline-block;
+    padding: 14px;
+    background: #FFFFFF;
+    border-radius: 14px;
+    box-shadow: 0 0 30px rgba(123,47,190,0.15);
+  }
+
+  #qrcode img, #qrcode canvas {
+    border-radius: 4px;
+    display: block;
+  }
+
+  .qr-label {
+    font-size: 12px;
+    color: #4A4460;
+    margin-top: 12px;
+  }
+
+  .grid-deco {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 4px);
+    gap: 4px;
+    opacity: 0.15;
+  }
+
+  .grid-deco span {
+    width: 4px;
+    height: 4px;
+    background: var(--purple-bright);
+    border-radius: 50%;
+  }
+
+  .powered {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 11px;
+    color: #3A3450;
+    letter-spacing: 0.5px;
+  }
+
+  .powered span {
+    color: var(--purple-bright);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="card" id="mainCard">
+
+    <div class="grid-deco">
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+    </div>
+
+    <div class="logo-area">
+      <!-- LOGO: coloque o arquivo logo_2neuron_report.png na mesma pasta do HTML -->
+      <img src="logo_2neuron_report.png" alt="2Neuron" class="logo-img" onerror="this.style.display='none'">
+      <h1>Cadastro <span class="accent">Vale Tubarão</span></h1>
+      <p class="subtitle">Preencha seus dados para registro</p>
+    </div>
+
+    <!-- Form -->
+    <form id="cadastroForm" autocomplete="off">
+      <div class="form-group">
+        <label>Número WhatsApp <span class="required">*</span></label>
+        <input type="tel" id="phoneInput" placeholder="5527999999999" maxlength="15" required>
+        <div class="error-msg" id="phoneError">⚠ Informe um número válido com DDD</div>
+        <p class="hint">Código do país + DDD + número</p>
+      </div>
+
+      <div class="form-group">
+        <label>E-mail corporativo <span class="required">*</span></label>
+        <input type="email" id="emailInput" placeholder="seunome@vale.com" required>
+        <div class="error-msg" id="emailError">⚠ Somente e-mails @vale.com são aceitos</div>
+        <p class="hint">Deve conter @vale.com</p>
+      </div>
+
+      <button type="submit" class="btn" id="submitBtn">
+        <span class="btn-text">Cadastrar</span>
+        <div class="spinner"></div>
+      </button>
+    </form>
+
+    <!-- Success -->
+    <div class="success-state" id="successState">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <p class="success-title">Cadastro realizado!</p>
+      <p class="success-msg">Seus dados foram registrados<br>com sucesso na planilha.</p>
+    </div>
+
+    <!-- QR Code -->
+    <div class="qr-section">
+      <div class="qr-divider"><span>QR Code</span></div>
+      <div id="qrcode"></div>
+      <p class="qr-label">Escaneie para abrir este formulário</p>
+    </div>
+  </div>
+
+  <p class="powered">powered by <span>2Neuron</span></p>
+</div>
+
+<script>
+  // =====================================================
+  // CONFIGURAÇÃO — Google Apps Script Web App URL
+  // =====================================================
+  // 1. Abra a planilha → Extensões → Apps Script
+  // 2. Cole:
+  //
+  //   function doPost(e) {
+  //     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Cadastro");
+  //     var data = JSON.parse(e.postData.contents);
+  //     sheet.appendRow([data.sender, data.email]);
+  //     return ContentService.createTextOutput(
+  //       JSON.stringify({status: "ok"})
+  //     ).setMimeType(ContentService.MimeType.JSON);
+  //   }
+  //
+  // 3. Implantar → Nova implantação → App da Web → Qualquer pessoa
+  // 4. Cole a URL abaixo:
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwk9C7vJj5yCmzFNYvzisBTmLdYAnxxApK1xrPGGqUjnX1maOEm9-Ul_Xgrfgj9Y4WS/exec";
+  // =====================================================
+
+  const form = document.getElementById('cadastroForm');
+  const phoneInput = document.getElementById('phoneInput');
+  const emailInput = document.getElementById('emailInput');
+  const phoneError = document.getElementById('phoneError');
+  const emailError = document.getElementById('emailError');
+  const submitBtn = document.getElementById('submitBtn');
+  const successState = document.getElementById('successState');
+
+  phoneInput.addEventListener('input', () => {
+    phoneInput.value = phoneInput.value.replace(/\D/g, '');
+    phoneInput.classList.remove('error');
+    phoneError.classList.remove('visible');
+  });
+
+  emailInput.addEventListener('input', () => {
+    emailInput.classList.remove('error');
+    emailError.classList.remove('visible');
+  });
+
+  function validatePhone(val) {
+    return /^\d{10,15}$/.test(val);
+  }
+
+  function validateEmail(val) {
+    return /^[^\s@]+@vale\.com$/i.test(val.trim());
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let valid = true;
+
+    if (!validatePhone(phoneInput.value)) {
+      phoneInput.classList.add('error');
+      phoneError.classList.add('visible');
+      valid = false;
+    }
+
+    if (!validateEmail(emailInput.value)) {
+      emailInput.classList.add('error');
+      emailError.classList.add('visible');
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+
+    const payload = {
+      sender: phoneInput.value.trim(),
+      email: emailInput.value.toLowerCase().trim()
+    };
+
+    try {
+      if (false) {
+        await new Promise(r => setTimeout(r, 1200));
+        console.log("DEMO — dados:", payload);
+      } else {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      }
+
+      form.style.display = 'none';
+      successState.classList.add('visible');
+
+    } catch (err) {
+      alert('Erro ao enviar. Tente novamente.');
+      console.error(err);
+    } finally {
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
+    }
+  });
+
+  // QR Code roxo 2Neuron
+  const pageURL = window.location.href;
+  new QRCode(document.getElementById('qrcode'), {
+    text: pageURL,
+    width: 160,
+    height: 160,
+    colorDark: "#7B2FBE",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
+  });
+</script>
+
+</body>
+</html>
